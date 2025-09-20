@@ -6,27 +6,45 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "books")
 public class Book {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
+    @NotBlank(message="Author is mandatory")
     private String author;
 
+    @NotNull
+    @NotBlank(message="Title is mandatory")
     private String title;
 
+    @NotNull
+    @NotBlank(message="Publisher is mandatory")
     private String publisher;
 
+    @NotNull
+    @Min(value=0)
     private Integer year;
+    
+    @NotNull
+    @Min(value=0)
+    private Integer numberOfCopies;
 
-    @Column(name="isbn_code", nullable=false, unique=true)
+
+    @NotNull(message = "ISBN cannot be null")
+    @Size(min=13, max=13, message="ISBN must be 13 chars")
+    @Column(name="isbn_code", length=13, nullable=false, unique=true)
     private String isbn;
 
-    private Integer numberOfCopies;
 
     private String genre;
 

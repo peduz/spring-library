@@ -1,6 +1,7 @@
 package org.lessons.spring_library.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.lessons.spring_library.model.Book;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface BookRepository extends JpaRepository<Book, Integer> {
 
     public List<Book> findByPublisherContainingIgnoreCase(String publisher);
+
+    public Optional<Book> findByIsbn(String isbn);
 
     @Query(value="select * from Book where id = ?1", nativeQuery=true)
     public Book filtroNativo(Integer id);
