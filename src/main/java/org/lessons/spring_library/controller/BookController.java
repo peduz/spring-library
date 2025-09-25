@@ -21,7 +21,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import jakarta.validation.Valid;
 
-
 @Controller
 @RequestMapping("/books")
 public class BookController {
@@ -62,20 +61,20 @@ public class BookController {
     }
 
     @PostMapping("/create")
-    public String save(@Valid @ModelAttribute("book") Book formBook, BindingResult bindingResult, 
-                        RedirectAttributes redirectAttributes) {
+    public String save(@Valid @ModelAttribute("book") Book formBook, BindingResult bindingResult,
+            RedirectAttributes redirectAttributes) {
         Optional<Book> optBook = repository.findByIsbn(formBook.getIsbn());
-        if(optBook.isPresent()) {
+        if (optBook.isPresent()) {
             //qui vuol dire che ha trovato un libro con ISBN su db
             bindingResult.addError(new ObjectError("isbn", "Isbn already present"));
         }
 
-        if(formBook.getYear() > LocalDate.now().getYear()) {
+        if (formBook.getYear() != null &&
+            formBook.getYear() > LocalDate.now().getYear()) {
             bindingResult.addError(new ObjectError("year", "Year cannot be in the future"));
         }
 
-
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return "/books/create";
         }
 
@@ -83,5 +82,48 @@ public class BookController {
         redirectAttributes.addFlashAttribute("successMessage", "Book created successifully");
         return "redirect:/books";
     }
-    
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable("id") Integer id, Model model) {
+        Optional<Book> optBook = repository.findById(id);
+        Book book = optBook.get();
+        model.addAttribute("book", book);
+
+        return "/books/edit";
+    }
+
+    @PostMapping("/edit/{id}")
+    public String update(@Valid @ModelAttribute("book") Book formBook, BindingResult bindingResult,
+            Model model) {
+
+        Book oldBook = repository.findById(formBook.getId()).get();
+
+        if (!oldBook.getTitle().equals(formBook.getTitle())) {
+            bindingResult.addError(new ObjectError("title", "Cannot change the title!"));
+        }
+
+        if (!oldBook.getIsbn().equals(formBook.getIsbn())) {
+            bindingResult.addError(new ObjectError("isbn", "Cannot change ISBN!"));
+        }
+
+        if (formBook.getYear() > LocalDate.now().getYear()) {
+            bindingResult.addError(new ObjectError("year", "Year cannot be in the future"));
+        }
+
+        if (bindingResult.hasErrors()) {
+            return "/books/edit";
+        }
+
+        repository.save(formBook);
+
+        return "redirect:/books";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable("id") Integer id) {
+
+        repository.deleteById(id);
+
+        return "redirect:/books";
+    }
 }
