@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.lessons.spring_library.model.Book;
+import org.lessons.spring_library.model.Borrowing;
 import org.lessons.spring_library.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -126,4 +127,16 @@ public class BookController {
 
         return "redirect:/books";
     }
+
+    @GetMapping("/{id}/borrow")
+    public String borrow(@PathVariable("id") Integer id, Model model) {
+        Borrowing borrowing = new Borrowing();
+        borrowing.setBook(repository.findById(id).get());
+
+        model.addAttribute("borrowing", borrowing);
+        //Creazione nuovo prestito
+        model.addAttribute("editMode", false);
+        return "/borrowings/edit";
+    }
+    
 }

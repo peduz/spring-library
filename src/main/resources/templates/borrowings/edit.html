@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css}" />
+
+    <link rel="stylesheet" th:href="@{/css/application.css}">
+    <title>Borrowing</title>
+</head>
+
+
+<body>
+    <nav th:replace="~{navbar :: navbar('Books')}"></nav>
+    <div class="container">
+        <div class="content">
+
+            <h1 class="text-center py-3" th:text="|Borrow ${borrowing.book.title}|"></h1>
+            <hr />
+            <form id="borrowing-form" th:object="${borrowing}" th:action="${editMode} ? @{|/borrowings/edit/${borrowing.id}|} : @{/borrowings/create}"
+                method="post">
+                <input type="hidden" th:field="*{book}" id="book">
+                <div class="w-50 gy-2">
+                    <div class="col-12">
+                        <label class="form-label" for="title">Borrowing date</label>
+                        <input id="borrowingDate" type="date" class="form-control" th:field="*{borrowingDate}"
+                            th:errorClass="is-invalid">
+                        <div th:if="${#fields.hasErrors('borrowingDate')}" class="invalid-feedback">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('borrowingDate')}" th:text="${err}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="title">Return date</label>
+                        <input id="returnDate" type="date" class="form-control" th:field="*{returnDate}"
+                            th:errorClass="is-invalid">
+                        <div th:if="${#fields.hasErrors('returnDate')}" class="invalid-feedback">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('returnDate')}" th:text="${err}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="title">Note</label>
+                        <input id="note" type="text" class="form-control" th:field="*{note}" th:errorClass="is-invalid">
+                        <div th:if="${#fields.hasErrors('note')}" class="invalid-feedback">
+                            <ul>
+                                <li th:each="err : ${#fields.errors('note')}" th:text="${err}"></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Salvataggio -->
+                    <div class="col-12">
+                        <button class="btn btn-primary" type="submit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-check" viewBox="0 0 16 16">
+                                <path
+                                    d="M10.97 4.97a.75.75 0 0 1 1.07 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425z" />
+                            </svg>
+                            Save 
+                        </button>
+
+                        <a th:href="@{|/books/show/${borrowing.book.id}|}" class="btn btn-danger"> Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Bootstrap Bundle with Popper -->
+    <script th:src="@{/webjars/bootstrap/5.1.3/js/bootstrap.bundle.min.js}"></script>
+</body>
+
+</html>
