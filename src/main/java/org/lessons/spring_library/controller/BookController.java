@@ -7,6 +7,8 @@ import java.util.Optional;
 import org.lessons.spring_library.model.Book;
 import org.lessons.spring_library.model.Borrowing;
 import org.lessons.spring_library.repository.BookRepository;
+import org.lessons.spring_library.repository.BorrowingRepository;
+import org.lessons.spring_library.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +30,12 @@ public class BookController {
 
     @Autowired
     private BookRepository repository;
+    
+    @Autowired
+    private BorrowingRepository borrowingRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @GetMapping
     public String index(Model model, @RequestParam(name = "keyword", required = false) String keyword) {
@@ -55,7 +63,7 @@ public class BookController {
 
     @GetMapping("/create")
     public String create(Model model) {
-
+        model.addAttribute("categoryList", categoryRepository.findAll());
         model.addAttribute("book", new Book());
 
         return "/books/create";
@@ -63,19 +71,20 @@ public class BookController {
 
     @PostMapping("/create")
     public String save(@Valid @ModelAttribute("book") Book formBook, BindingResult bindingResult,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes, Model model) {
         Optional<Book> optBook = repository.findByIsbn(formBook.getIsbn());
         if (optBook.isPresent()) {
             //qui vuol dire che ha trovato un libro con ISBN su db
             bindingResult.addError(new ObjectError("isbn", "Isbn already present"));
         }
 
-        if (formBook.getYear() != null &&
-            formBook.getYear() > LocalDate.now().getYear()) {
+        if (formBook.getYear() != null
+                && formBook.getYear() > LocalDate.now().getYear()) {
             bindingResult.addError(new ObjectError("year", "Year cannot be in the future"));
         }
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("categoryList", categoryRepository.findAll());
             return "/books/create";
         }
 
@@ -88,6 +97,7 @@ public class BookController {
     public String edit(@PathVariable("id") Integer id, Model model) {
         Optional<Book> optBook = repository.findById(id);
         Book book = optBook.get();
+        model.addAttribute("categoryList", categoryRepository.findAll());
         model.addAttribute("book", book);
 
         return "/books/edit";
@@ -112,6 +122,7 @@ public class BookController {
         }
 
         if (bindingResult.hasErrors()) {
+            model.addAttribute("categoryList", categoryRepository.findAll());
             return "/books/edit";
         }
 
@@ -122,6 +133,11 @@ public class BookController {
 
     @PostMapping("/delete/{id}")
     public String delete(@PathVariable("id") Integer id) {
+        Book book = repository.findById(id).get();
+        for (Borrowing borrowingToDelete : book.getBorrowings()) {
+
+            borrowingRepository.delete(borrowingToDelete);
+        }
 
         repository.deleteById(id);
 
@@ -138,5 +154,5 @@ public class BookController {
         model.addAttribute("editMode", false);
         return "/borrowings/edit";
     }
-    
+
 }

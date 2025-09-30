@@ -63,7 +63,6 @@
                         <th scope="col">Publisher</th>
                         <th scope="col">Year</th>
                         <th scope="col">N. copies</th>
-                        <th scope="col">Genre</th>
                         <th></th> <!-- Header per il dettaglio -->
                         <th></th> <!-- Header per la modifica -->
                         <th></th> <!-- Header per la cancellazione -->
@@ -77,7 +76,6 @@
                         <td th:text="${item.publisher}"></td>
                         <td th:text="${item.year}"></td>
                         <td th:text="${item.numberOfCopies}"></td>
-                        <td th:text="${item.genre}"></td>
 
                         <td> <!-- Colonna per il dettaglio -->
                             <a th:href="@{|books/show/${item.id}|}" class="btn btn-primary">

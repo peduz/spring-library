@@ -18,6 +18,10 @@
                         <a class="nav-link" aria-current="page" th:href="@{/books}"
                             th:classAppend="${current == 'Books'} ? active : not-active">Books</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" th:href="@{/categories}"
+                            th:classAppend="${current == 'Categories'} ? active : not-active">Categories</a>
+                    </li>
                 </ul>
             </div>
         </div>

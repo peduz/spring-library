@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/5.1.3/css/bootstrap.min.css}" />
+
+    <link rel="stylesheet" th:href="@{/css/application.css}">
+    <title>Categories</title>
+</head>
+
+
+<body>
+    <nav th:replace="~{navbar :: navbar('Categories')}"></nav>
+    <div class="container">
+        <h1>Categories</h1>
+        <hr />
+        <div class="row">
+            <div class="col-4">
+                <form id="category-form" th:action="@{/categories/create}" method="post" th:object="${categoryObj}">
+                    <ul th:if="${#fields.hasErrors('category')}">
+                        <li th:each="err : ${#fields.errors('category')}" th:text="${err}">Input is incorrect</li>
+                    </ul>
+                    <div class="input-group mb-3">
+                        <input type="text" id="category" th:field="*{category}" class="form-control">
+                        <button type="submit" class="btn btn-primary"> Add </button>
+                    </div>
+                </form>
+                <ul class="list-group" th:if="${list.size() > 0}">
+                    <li class="list-group-item d-flex justify-content-between" th:each="item : ${list}">
+                        <span th:text="|N. books associated ${item.books.size()}|"></span>
+                        <span th:text="${item.category}"></span>
+                        <form th:action="@{|/categories/delete/${item.id}|}" method="post">
+                            <button class="btn btn-danger" type="submit" id="deleteButton" 
+                                    onclick="return confirm('Are you sure?')">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-trash" viewBox="0 0 16 16">
+                                    <path
+                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                                    <path
+                                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                                </svg>
+                            </button>
+                        </form>
+                    </li>
+                </ul>
+                <div class="alert alert-primary" role="alert" th:unless="${list.size() > 0}">
+                    There are no categories in the database
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -7,6 +7,9 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
@@ -17,41 +20,45 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "books")
 public class Book {
-    
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @NotNull
-    @NotBlank(message="Author is mandatory")
+    @NotBlank(message = "Author is mandatory")
     private String author;
 
     @NotNull
-    @NotBlank(message="Title is mandatory")
+    @NotBlank(message = "Title is mandatory")
     private String title;
 
     @NotNull
-    @NotBlank(message="Publisher is mandatory")
+    @NotBlank(message = "Publisher is mandatory")
     private String publisher;
 
     @NotNull
-    @Min(value=0)
+    @Min(value = 0)
     private Integer year;
-    
+
     @NotNull
-    @Min(value=0)
+    @Min(value = 0)
     private Integer numberOfCopies;
 
-
     @NotNull(message = "ISBN cannot be null")
-    @Size(min=13, max=13, message="ISBN must be 13 chars")
-    @Column(name="isbn_code", length=13, nullable=false, unique=true)
+    @Size(min = 13, max = 13, message = "ISBN must be 13 chars")
+    @Column(name = "isbn_code", length = 13, nullable = false, unique = true)
     private String isbn;
 
+    @ManyToMany
+    @JoinTable(
+            name = "book_categories",
+            joinColumns = @JoinColumn(name = "book_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories;
 
-    private String genre;
-
-    @OneToMany(mappedBy="book")
+    @OneToMany(mappedBy = "book")
     private List<Borrowing> borrowings;
 
     public Integer getId() {
@@ -60,6 +67,14 @@ public class Book {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     public String getAuthor() {
@@ -118,13 +133,4 @@ public class Book {
         this.numberOfCopies = numberOfCopies;
     }
 
-    public String getGenre() {
-        return genre;
-    }
-
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    
 }
