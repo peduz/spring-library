@@ -24,11 +24,12 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             </th:block>
+            <h3 th:text="|Hi ${username}|"> </h3>
             <h1 class="text-center py-3">Book</h1>
             <hr />
 
             <div class="mb-3 d-flex justify-content-between">
-                <a class="btn btn-primary" th:href="@{/books/create}">
+                <a class="btn btn-primary" th:href="@{/books/create}" sec:authorize="hasAuthority('ADMIN')">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-plus" viewBox="0 0 16 16">
                         <path
@@ -64,8 +65,8 @@
                         <th scope="col">Year</th>
                         <th scope="col">N. copies</th>
                         <th></th> <!-- Header per il dettaglio -->
-                        <th></th> <!-- Header per la modifica -->
-                        <th></th> <!-- Header per la cancellazione -->
+                        <th sec:authorize="hasAuthority('ADMIN')" ></th> <!-- Header per la modifica -->
+                        <th sec:authorize="hasAuthority('ADMIN')" ></th> <!-- Header per la cancellazione -->
                     </tr>
                 </thead>
                 <tbody>
@@ -87,7 +88,7 @@
                             </a>
                         </td>
 
-                        <td> <!-- Colonna per la modifica -->
+                        <td sec:authorize="hasAuthority('ADMIN')"> <!-- Colonna per la modifica -->
                             <a th:href="@{|books/edit/${item.id}|}" class="btn btn-primary">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-pencil" viewBox="0 0 16 16">
@@ -97,7 +98,7 @@
                             </a>
                         </td>
 
-                        <td> <!-- Colonna per la cancellazione -->
+                        <td sec:authorize="hasAuthority('ADMIN')"> <!-- Colonna per la cancellazione -->
                             <form th:action="@{'/books/delete/{id}'(id=${item.id})}" method="post">
                                 <button class="btn btn-danger" type="submit" id="submitButton" 
                                             onclick="return confirm('Are you sure?')">

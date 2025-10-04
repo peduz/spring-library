@@ -10,6 +10,7 @@ import org.lessons.spring_library.repository.BookRepository;
 import org.lessons.spring_library.repository.BorrowingRepository;
 import org.lessons.spring_library.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,7 +39,7 @@ public class BookController {
     private CategoryRepository categoryRepository;
 
     @GetMapping
-    public String index(Model model, @RequestParam(name = "keyword", required = false) String keyword) {
+    public String index(Authentication auth, Model model, @RequestParam(name = "keyword", required = false) String keyword) {
         List<Book> result = null;
         if (keyword == null || keyword.isBlank()) {
             result = repository.findAll();
@@ -46,6 +47,7 @@ public class BookController {
             result = repository.findByPublisherContainingIgnoreCase(keyword);
         }
         model.addAttribute("list", result);
+        model.addAttribute("username", auth.getName());
         return "books/index";
     }
 
