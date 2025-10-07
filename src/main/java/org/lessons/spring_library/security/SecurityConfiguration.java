@@ -22,7 +22,8 @@ public class SecurityConfiguration {
                 .requestMatchers("/books", "/books/**").hasAnyAuthority("USER", "ADMIN")
                 .requestMatchers("/**").permitAll()
                 .and().formLogin()
-                .and().logout();
+                .and().logout()
+                .and().csrf().disable();
         return http.build();
     }
 
